@@ -1,13 +1,13 @@
 class DraggableMagnet {
-    constructor() {
+    constructor(width, height) {
 
         this.dragging = false;
         this.rollover = false;
 
         this.x = 300;
         this.y = 300;
-        this.w = 150;
-        this.h = 50;
+        this.w = width;
+        this.h = height;
         this.colors = [
             [255, 0, 0],
             [0, 70, 255]
