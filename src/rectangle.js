@@ -1,15 +1,13 @@
 class Rectangle {
-    constructor() {
+    constructor(x, y, color) {
 
-        this.dragging = false;
         this.rollover = false;
 
         this.x = 100;
         this.y = 100;
         this.w = 50;
         this.h = 50;
-        this.northChild = null;
-        this.southChild = null;
+
     }
 
     over() {
@@ -29,7 +27,7 @@ class Rectangle {
     }
 
     show() {
-        stroke(0);
+        stroke(255);
         if (this.dragging) {
             fill(50);
         } else if (this.rollover) {
@@ -38,7 +36,6 @@ class Rectangle {
             fill(175, 200);
         }
         rect(this.x, this.y, this.w, this.h);
-        rotate(45)
     }
 
     pressed() {
