@@ -25,8 +25,23 @@ class DraggableMagnet {
 
     update() {
         if (this.dragging) {
-            this.x = mouseX + this.offsetX;
-            this.y = mouseY + this.offsetY;
+            const newXPosition = mouseX + this.offsetX;
+            const newYPosition = mouseY + this.offsetY;
+            if (newXPosition < 0) {
+                this.x = 0;
+            } else if (newXPosition + this.w > windowWidth) {
+                this.x = windowWidth - this.w;
+            } else {
+                this.x = newXPosition;
+            }
+
+            if (newYPosition < 0) {
+                this.y = 0;
+            } else if (newYPosition + this.h > windowHeight * 3 / 4) {
+                this.y = windowHeight * 3 / 4 - this.h;
+            } else {
+                this.y = newYPosition;
+            }
         }
     }
 

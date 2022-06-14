@@ -1,10 +1,12 @@
 let magnet;
-let testRect;
+let slider;
+let sliderValue;
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+    createCanvas(windowWidth, windowHeight * 3 / 4);
     magnet = new DraggableMagnet();
-    testRect = new Rectangle();
+    slider = createSlider(-90, 90, 0, 10);
+    sliderValue = createSpan(slider.value())
 }
 
 function draw() {
@@ -12,19 +14,15 @@ function draw() {
     magnet.update();
     magnet.over();
     magnet.show();
-    testRect.update();
-    testRect.over();
-    testRect.show();
+    sliderValue.html(slider.value());
 }
 
 function mousePressed() {
     magnet.pressed();
-    testRect.pressed();
 }
 
 function mouseReleased() {
     magnet.released();
-    testRect.released();
 }
 
 function windowResized() {
