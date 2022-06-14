@@ -70,4 +70,20 @@ class DraggableMagnet {
     released() {
         this.dragging = false;
     }
+
+    getX() {
+        return this.x;
+    }
+
+    getY() {
+        return this.y;
+    }
+
+    getMinX() {
+        return this.x;
+    }
+
+    getYMiddle() {
+        return this.y + this.h / 2;
+    }
 }
