@@ -1,4 +1,5 @@
 let magnet;
+let bulb;
 let slider;
 let sliderValue;
 let canvas;
@@ -34,6 +35,7 @@ let pixelsPerM = pixelsPerCM * 100;
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight * 3 / 4);
     magnet = new DraggableMagnet(magnetWidth, magnetHeight);
+    bulb = new Bulb(130, 130, 80);
     slider = createSlider(-90, 90, 0, 10);
     sliderValue = createSpan(slider.value())
     BValue = createSpan("Value: 0");
@@ -62,7 +64,9 @@ function draw() {
     lastFi = Fi;
     lastTime = newTime;
 
-    BValue.html("Electromotoric Force: " + ElectromotoricForce + "<br/>Delta Fi: " + dFi + "<br/>B: " + B + "<br/>Z: " + (getDistanceToMagnet()*100).toFixed(2) + "cm");
+    updateInfoBox(ElectromotoricForce, dFi, B, (getDistanceToMagnet()*100).toFixed(2));
+    bulb.show(ElectromotoricForce);
+    
 }
 
 function mousePressed() {
@@ -102,4 +106,9 @@ function getFi(B, S, angle)
 function getElectroMotoricForce(N, dFi, dTime)
 {
     return -(N*dFi)/dTime;
+}
+
+function updateInfoBox(E, dFi, B, z)
+{
+    BValue.html("<div style=\"margin: 10px; padding: 10px; background-color: #f9e3;\">" + "Electromotoric Force: " + E + "<br/>Delta Fi: " + dFi + "<br/>B: " + B + "<br/>Z: " + z + "cm" + "</div>");
 }
