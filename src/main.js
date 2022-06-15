@@ -4,7 +4,7 @@ let sliderValue;
 let canvas;
 let coilFrontImg;
 let coilBackImg;
-let coilPixDiff = 70;
+let coilPositionPixDiff = 63;
 let magnetWidth = 150;
 let magnetHeight = 50;
 
@@ -12,12 +12,24 @@ let coilXMiddle;
 let coilYMiddle;
 let BValue;
 
-let coilArea = 10;
-let Br = 1.42; // data from the table
+let lastFi = null;
+let lastTime = null;
 
+
+// ========
+//  params
+// ========
+let pixelsPerCM = 100;
 let magnetLengthInM = 0.10;
 let magnetWidthInM = 0.10;
 let magnetThicknessInM = 0.25;
+let coilArea = 10;
+let coilQuantity = 6;
+let Br = 1.42; // data from the table
+let magnetAngleInPiRadians = 0;
+
+let pixelsPerM = pixelsPerCM * 100;
+
 
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight * 3 / 4);
@@ -29,16 +41,28 @@ function setup() {
 }
 
 function draw() {
+    if (lastFi === null) lastFi = 0;
+    if (lastTime === null) lastTime = Date.now();
     background(220);
     image(coilBackImg, width / 2 - coilBackImg.width / 2, height / 2 - coilBackImg.height / 2, 250, 250);
     magnet.update();
     magnet.over();
     magnet.show();
     sliderValue.html(slider.value());
-    image(coilFrontImg, width / 2 - coilFrontImg.width / 2 - coilPixDiff, height / 2 - coilFrontImg.height / 2, 250, 250);
-    coilXMiddle = (width / 2 - coilFrontImg.width / 2) - (width / 2 - coilFrontImg.width / 2 - coilPixDiff);
-    coilYMiddle = (height / 2 - coilBackImg.height / 2); // TODO: this is not correct
-    BValue.html("Value: " + getB());
+    image(coilFrontImg, width / 2 - coilFrontImg.width / 2 - coilPositionPixDiff, height / 2 - coilFrontImg.height / 2, 250, 250);
+    coilXMiddle = (width / 2) - (coilFrontImg.width / 2) - (coilPositionPixDiff / 4);
+    coilYMiddle = (height / 2) - (coilBackImg.height / 4);
+
+    let B = getB();
+    let Fi = getFi(B, coilArea, magnetAngleInPiRadians);
+    let newTime = Date.now();
+    let dFi = Fi-lastFi; 
+    let dTime = (newTime - lastTime)/1000;
+    let ElectromotoricForce = getElectroMotoricForce(coilQuantity, dFi, dTime);
+    lastFi = Fi;
+    lastTime = newTime;
+
+    BValue.html("Electromotoric Force: " + ElectromotoricForce + "<br/>Delta Fi: " + dFi + "<br/>B: " + B + "<br/>Z: " + (getDistanceToMagnet()*100).toFixed(2) + "cm");
 }
 
 function mousePressed() {
@@ -67,5 +91,15 @@ function getB() {
 }
 
 function getDistanceToMagnet() {
-    return Math.sqrt(Math.pow((magnet.getMinX() - coilXMiddle), 2) + Math.pow(magnet.getYMiddle() - coilYMiddle, 2))
+    return Math.sqrt(Math.pow((min(magnet.getMinX(), magnet.getMaxX()) - coilXMiddle)/pixelsPerM, 2) + Math.pow((magnet.getYMiddle() - coilYMiddle)/pixelsPerM, 2))
+}
+
+function getFi(B, S, angle)
+{
+    return B * S * Math.cos(angle);
+}
+
+function getElectroMotoricForce(N, dFi, dTime)
+{
+    return -(N*dFi)/dTime;
 }

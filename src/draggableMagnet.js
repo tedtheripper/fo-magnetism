@@ -83,6 +83,10 @@ class DraggableMagnet {
         return this.x;
     }
 
+    getMaxX(){
+        return this.x + this.w;
+    }
+
     getYMiddle() {
         return this.y + this.h / 2;
     }
