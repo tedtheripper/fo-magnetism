@@ -27,22 +27,13 @@ class DraggableMagnet {
         if (this.dragging) {
             const newXPosition = mouseX + this.offsetX;
             const newYPosition = mouseY + this.offsetY;
-            if (newXPosition < 0) {
-                this.x = 0;
-            } else if (newXPosition + this.w > windowWidth) {
-                this.x = windowWidth - this.w;
-            } else {
-                this.x = newXPosition;
-            }
-
-            if (newYPosition < 0) {
-                this.y = 0;
-            } else if (newYPosition + this.h > windowHeight * 3 / 4) {
-                this.y = windowHeight * 3 / 4 - this.h;
-            } else {
-                this.y = newYPosition;
-            }
+            this.x = this.between(newXPosition, windowWidth * 2 / 3 - this.w, 0);
+            this.y = this.between(newYPosition, windowHeight * 3 / 4 - this.h, 0);
         }
+    }
+
+    between(value, maxValue, minValue) {
+        return Math.min(maxValue, Math.max(minValue, value));
     }
 
     show() {

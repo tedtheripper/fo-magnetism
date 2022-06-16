@@ -62,29 +62,23 @@ let pixelsPerM = params["ppcm"] * 100;
 
 
 function setup() {
-    canvas = createCanvas(windowWidth, windowHeight * 3 / 4);
+    canvas = createCanvas(windowWidth, windowHeight*0.99);
+    let settingsXStart = canvas.width * 0.70;
+    let settingsYStart = canvas.height * 0.10;
     BValue = createSpan("");
-    BValue.position(0, canvas.height - 100);
+    BValue.position(settingsXStart, height -140);
     magnet = new DraggableMagnet(magnetWidth, magnetHeight);
     bulb = new Bulb(130, 130, 80);
-    graph = new Graph(windowWidth - 630, height-180, 620, 160, latestNVoltages);
+    graph = new Graph(10, height - 165, 620, 160, latestNVoltages);
+
+
 
     slider = createSlider(-180, 180, 0, 10);
-    slider.position(320, canvas.height + 10);
+    slider.position(700, height - 140);
     sliderValue = createSpan(slider.value());
-    sliderValue.position(380, canvas.height + 30);
+    sliderValue.position(760, height -110);
     sliderLabel = createSpan("Magnet angle");
-    sliderLabel.position(325, canvas.height + 50);
-    slider.hide();
-    sliderValue.hide();
-    sliderLabel.hide();
-
-    let settingsXStart = canvas.width * 0.10;
-    let settingsYStart = canvas.height * 0.10;
-
-    parametersButton = createButton("Change Parameters");
-    parametersButton.position(10, canvas.height + 10)
-    parametersButton.mousePressed(changeParametersWindowState);
+    sliderLabel.position(710, height -90);
 
     applyParametersButton = createButton('Save');
     applyParametersButton.position(settingsXStart + 30, settingsYStart + 420);
@@ -145,56 +139,39 @@ function setup() {
     ppcmText = createInput("100");
     ppcmText.position(settingsXStart, settingsYStart + 390);
     settings.push(ppcmText);
-
-    settings.forEach(s => {
-        s.hide();
-    });
+    checkValues();
 }
 
 function draw() {
-    if (isParametersWindowOpen) {
-        parametersButton.hide();
-    } else {
-        parametersButton.show();
-    }
+    background(220);
+    fill(255);
+    rect(0, 0, windowWidth*2/3, windowHeight*3/4 );
+    drawParametersInputSegment();
+    if (lastFi === null) lastFi = 0;
+    if (lastTime === null) lastTime = Date.now();
+    image(coilBackImg, 600 - coilBackImg.width / 2, 300 - coilBackImg.height / 2, 250, 250);
+    magnet.update();
+    magnet.over();
+    magnet.changeRotationInDegrees(slider.value())
+    coilXMiddle = 600 + (coilBackImg.width / 2) - 3 * coilPositionPixDiff;
+    coilYMiddle = 300 - (coilBackImg.height / 4);
 
-    if (isParametersWindowOpen) {
-        BValue.html("");
-        background(220);
-        settings.forEach(s => s.show());
-    } else {
-        settings.forEach(s => s.hide());
-        drawParametersInputSegment();
-        slider.show();
-        sliderValue.show();
-        sliderLabel.show();
-        if (lastFi === null) lastFi = 0;
-        if (lastTime === null) lastTime = Date.now();
-        background(220);
-        image(coilBackImg, width / 2 - coilBackImg.width / 2, 300 - coilBackImg.height / 2, 250, 250);
-        magnet.update();
-        magnet.over();
-        magnet.changeRotationInDegrees(slider.value())
-        magnet.show();
-        image(coilFrontImg, width / 2 - coilFrontImg.width / 2 - coilPositionPixDiff, 300 - coilFrontImg.height / 2, 250, 250);
-        coilXMiddle = (width / 2) + (coilBackImg.width / 2) - 3 * coilPositionPixDiff;
-        coilYMiddle = 300 - (coilBackImg.height / 4);
+    let B = getB();
+    let Fi = getFi(B, params["coilArea"], magnetAngleInPiRadians);
+    let newTime = Date.now();
+    let dFi = Fi - lastFi;
+    let dTime = (newTime - lastTime) / 1000;
+    let ElectromotoricForce = getElectroMotoricForce(params["coilCount"], dFi, dTime);
+    lastFi = Fi;
+    lastTime = newTime;
 
-        let B = getB();
-        let Fi = getFi(B, params["coilArea"], magnetAngleInPiRadians);
-        let newTime = Date.now();
-        let dFi = Fi - lastFi;
-        let dTime = (newTime - lastTime) / 1000;
-        let ElectromotoricForce = getElectroMotoricForce(params["coilCount"], dFi, dTime);
-        lastFi = Fi;
-        lastTime = newTime;
-
-        updateInfoBox(ElectromotoricForce, dFi, B, (getDistanceToMagnet() * 100));
-        latestVoltage.push(ElectromotoricForce);
-        latestVoltage = latestVoltage.slice(-latestNVoltages);
-        graph.show(latestVoltage);
-        bulb.show(ElectromotoricForce);
-    }
+    updateInfoBox(ElectromotoricForce, dFi, B, (getDistanceToMagnet() * 100));
+    latestVoltage.push(ElectromotoricForce);
+    latestVoltage = latestVoltage.slice(-latestNVoltages);
+    graph.show(latestVoltage);
+    bulb.show(ElectromotoricForce);
+    magnet.show();
+    image(coilFrontImg, 600 - coilFrontImg.width / 2 - coilPositionPixDiff, 300 - coilFrontImg.height / 2, 250, 250);
 }
 
 function mousePressed() {
@@ -249,10 +226,6 @@ function saveParams() {
     if (checkValues()) {
         changeParametersWindowState();
     }
-}
-
-function changeParametersWindowState() {
-    isParametersWindowOpen = !isParametersWindowOpen;
 }
 
 function checkValues() {

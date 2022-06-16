@@ -14,8 +14,6 @@ class Graph {
         let valuesMax = Math.max(...values);
         let valuesMin = Math.min(...values);
         translate(this.x, this.y);
-        fill(255);
-        rect(0, 0, this.w, this.h);
         fill(255, 153, 51);
         let i = 0;
         values.forEach(element => {
