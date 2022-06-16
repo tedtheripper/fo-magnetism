@@ -6,8 +6,8 @@ class Bulb {
     }
 
     show(intensity) {
-        stroke(255);
-        fill(255, 255, max(255-Math.abs(intensity), 0));
+        stroke(0);
+        fill(255, 255, max(255 - Math.abs(intensity), 0));
         circle(this.x, this.y, this.r);
     }
 }
