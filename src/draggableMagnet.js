@@ -15,10 +15,7 @@ class DraggableMagnet {
     }
 
     over() {
-        const xMiddle = this.x + this.w / 2;
-        const yMiddle = this.y + this.h / 2;
-
-        const d = Math.sqrt(Math.pow((mouseX - xMiddle), 2) + Math.pow((mouseY - yMiddle), 2))
+        const d = Math.sqrt(Math.pow((mouseX - this.getXmiddle()), 2) + Math.pow((mouseY - this.getYmiddle()), 2))
 
         this.rollover = false;
         if (d < this.r) {
@@ -50,12 +47,10 @@ class DraggableMagnet {
 
     show() {
         push()
-        translate(this.x + this.w / 2, this.y + this.h / 2);
+        translate(this.getXmiddle(), this.getYmiddle());
         rotate(this.rotationInRadians)
         image(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
-        // translate(-(this.x + this.w / 2), -(this.y + this.h / 2));
         pop()
-            // rotate(-this.degreesToRadians(this.rotationInDegrees));
     }
 
     pressed() {
@@ -82,6 +77,14 @@ class DraggableMagnet {
         this.dragging = false;
     }
 
+    getXmiddle() {
+        return this.x + this.w / 2;
+    }
+
+    getYmiddle() {
+        return this.y + this.h / 2;
+    }
+
     getX() {
         return this.x;
     }
@@ -90,15 +93,10 @@ class DraggableMagnet {
         return this.y;
     }
 
-    getMinX() {
-        return this.x;
-    }
-
-    getMaxX() {
-        return this.x + this.w;
-    }
-
-    getYMiddle() {
-        return this.y + this.h / 2;
+    getPoleCords(isNorthPole) {
+        let sign = isNorthPole? -1:  1;
+        let x = (sign * this.w/2)*Math.cos(this.rotationInRadians);
+        let y = (sign * this.w/2)*Math.sin(this.rotationInRadians);
+        return [this.getXmiddle() + x, this.getYmiddle() + y];
     }
 }

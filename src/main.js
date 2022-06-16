@@ -96,7 +96,10 @@ function getB() {
 }
 
 function getDistanceToMagnet() {
-    return Math.sqrt(Math.pow((min(magnet.getMinX(), magnet.getMaxX()) - coilXMiddle) / pixelsPerM, 2) + Math.pow((magnet.getYMiddle() - coilYMiddle) / pixelsPerM, 2))
+    let northPoleCords = magnet.getPoleCords(true);
+    let southPoleCords = magnet.getPoleCords(false);
+    return min(Math.sqrt(Math.pow(northPoleCords[0] - coilXMiddle, 2) + Math.pow(northPoleCords[1] - coilYMiddle, 2)), 
+    Math.sqrt(Math.pow(southPoleCords[0] - coilXMiddle, 2) + Math.pow(southPoleCords[1] - coilYMiddle, 2))) / pixelsPerM;
 }
 
 function getFi(B, S, angle) {
