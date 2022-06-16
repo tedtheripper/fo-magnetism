@@ -219,8 +219,8 @@ function preload() {
 function getB() {
     const firstPart = params["br"] / PI;
     const z = getDistanceToMagnet();
-    const firstArctan = Math.atan((params["length"] * params["width"]) / (2 * z * Math.sqrt(4 * Math.pow(z, 2) + Math.pow(params["length"], 2) + Math.pow(params["width"], 2))));
-    const secondArctan = Math.atan((params["length"] * params["width"]) / (2 * (params["thickness"] + z) * Math.sqrt(4 * Math.pow((params["thickness"] + z), 2) + Math.pow(params["length"], 2) + Math.pow(params["width"], 2))));
+    const firstArctan = Math.atan((params["width"] * params["thickness"]) / (2 * z * Math.sqrt(4 * Math.pow(z, 2) + Math.pow(params["width"], 2) + Math.pow(params["thickness"], 2))));
+    const secondArctan = Math.atan((params["width"] * params["thickness"]) / (2 * (params["length"] + z) * Math.sqrt(4 * Math.pow((params["length"] + z), 2) + Math.pow(params["width"], 2) + Math.pow(params["thickness"], 2))));
     return firstPart * (firstArctan - secondArctan);
 }
 
