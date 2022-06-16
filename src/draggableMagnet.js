@@ -12,6 +12,8 @@ class DraggableMagnet {
 
         this.r = Math.sqrt(Math.pow(this.w / 2, 2) + Math.pow(this.h / 2, 2))
         this.rotationInRadians = 0;
+
+        this.drawFields = false;
     }
 
     over() {
@@ -40,6 +42,21 @@ class DraggableMagnet {
         push()
         translate(this.getXmiddle(), this.getYmiddle());
         rotate(this.rotationInRadians)
+        if (this.drawFields) {
+            push()
+            noFill();
+            ellipse(0, -this.h, 300, 100);
+            ellipse(0, this.h, 300, 100);
+
+            ellipse(0, -2 * this.h, 500, 200);
+            ellipse(0, 2 * this.h, 500, 200);
+
+            ellipse(0, -3 * this.h, 700, 300);
+            ellipse(0, 3 * this.h, 700, 300);
+
+            pop();
+        }
+
         image(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
         pop()
     }
@@ -89,5 +106,9 @@ class DraggableMagnet {
         let x = (sign * this.w / 2) * Math.cos(this.rotationInRadians);
         let y = (sign * this.w / 2) * Math.sin(this.rotationInRadians);
         return [this.getXmiddle() + x, this.getYmiddle() + y];
+    }
+
+    setDrawFields(canDraw) {
+        this.drawFields = canDraw;
     }
 }

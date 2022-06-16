@@ -39,6 +39,7 @@ let ppcmText;
 let bulbDesc;
 let bulbText;
 let savedText;
+let drawFields;
 
 let applyParametersButton;
 
@@ -83,6 +84,8 @@ function setup() {
     sliderValue.position(760, height - 110);
     sliderLabel = createSpan("Magnet angle");
     sliderLabel.position(710, height - 90);
+    drawFields = createCheckbox("Draw fields", false);
+    drawFields.position(900, height - 140);
 
     applyParametersButton = createButton('Save');
     applyParametersButton.position(settingsXStart + 30, settingsYStart + 480);
@@ -167,6 +170,7 @@ function draw() {
     if (lastFi === null) lastFi = 0;
     if (lastTime === null) lastTime = Date.now();
 
+    magnet.setDrawFields(drawFields.checked());
     image(coilBackImg, 600 - coilBackImg.width / 2, 300 - coilBackImg.height / 2, 250, 250);
     magnet.update();
     magnet.over();
