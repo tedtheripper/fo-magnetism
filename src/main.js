@@ -33,6 +33,8 @@ let coilCountDesc;
 let coilCountText;
 let ppcmDesc; // pixels per cm
 let ppcmText;
+let bulbDesc;
+let bulbText;
 
 let applyParametersButton;
 
@@ -62,11 +64,11 @@ let pixelsPerM = params["ppcm"] * 100;
 
 
 function setup() {
-    canvas = createCanvas(windowWidth, windowHeight*0.99);
+    canvas = createCanvas(windowWidth, windowHeight * 0.99);
     let settingsXStart = canvas.width * 0.70;
     let settingsYStart = canvas.height * 0.10;
     BValue = createSpan("");
-    BValue.position(settingsXStart, height -140);
+    BValue.position(settingsXStart, height - 140);
     magnet = new DraggableMagnet(magnetWidth, magnetHeight);
     bulb = new Bulb(130, 130, 80);
     graph = new Graph(10, height - 165, 620, 160, latestNVoltages);
@@ -76,12 +78,12 @@ function setup() {
     slider = createSlider(-180, 180, 0, 10);
     slider.position(700, height - 140);
     sliderValue = createSpan(slider.value());
-    sliderValue.position(760, height -110);
+    sliderValue.position(760, height - 110);
     sliderLabel = createSpan("Magnet angle");
-    sliderLabel.position(710, height -90);
+    sliderLabel.position(710, height - 90);
 
     applyParametersButton = createButton('Save');
-    applyParametersButton.position(settingsXStart + 30, settingsYStart + 420);
+    applyParametersButton.position(settingsXStart + 30, settingsYStart + 480);
     applyParametersButton.mousePressed(saveParams);
     settings.push(applyParametersButton);
     BrDesc = createSpan("Magnet parameter from the <a href='https://www.supermagnete.de/eng/physical-magnet-data'>table</a> [T]");
@@ -139,13 +141,22 @@ function setup() {
     ppcmText = createInput("100");
     ppcmText.position(settingsXStart, settingsYStart + 390);
     settings.push(ppcmText);
+
+    bulbDesc = createSpan("Bulb max voltage [V]");
+    bulbDesc.position(settingsXStart, settingsYStart + 420);
+    settings.push(bulbDesc);
+
+    bulbText = createInput("230");
+    bulbText.position(settingsXStart, settingsYStart + 450);
+    settings.push(bulbText);
+
     checkValues();
 }
 
 function draw() {
     background(220);
     fill(255);
-    rect(0, 0, windowWidth*2/3, windowHeight*3/4 );
+    rect(0, 0, windowWidth * 2 / 3, windowHeight * 3 / 4);
     drawParametersInputSegment();
     if (lastFi === null) lastFi = 0;
     if (lastTime === null) lastTime = Date.now();
@@ -223,9 +234,7 @@ function drawParametersInputSegment() {
 }
 
 function saveParams() {
-    if (checkValues()) {
-        changeParametersWindowState();
-    }
+    checkValues();
 }
 
 function checkValues() {
@@ -283,6 +292,15 @@ function checkValues() {
         return false;
     } else {
         params["ppcm"] = ppcm;
+    }
+
+    let bulbVoltage = parseFloat(bulbText.value());
+    if (isNaN(bulbVoltage) || bulbVoltage <= 0) {
+        alert("[Bulb max voltage] must be a positive number!");
+        return false;
+    } else {
+        params["bulbVoltage"] = bulbVoltage;
+        bulb.setMaxVoltage(bulbVoltage);
     }
 
     return true;
