@@ -67,8 +67,6 @@ function draw() {
 
     updateInfoBox(ElectromotoricForce, dFi, B, (getDistanceToMagnet() * 100).toFixed(2));
     bulb.show(ElectromotoricForce);
-    fill(0)
-    rect(100, 100, -30, -30);
 
 }
 
