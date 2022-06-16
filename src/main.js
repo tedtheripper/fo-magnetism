@@ -10,6 +10,7 @@ let bulb;
 let canvas;
 let coilFrontImg;
 let coilBackImg;
+let graph;
 
 // ======
 // parameters objects input
@@ -17,6 +18,7 @@ let coilBackImg;
 let sliderDesc;
 let slider;
 let sliderValue;
+let sliderLabel;
 let BrDesc;
 let BrText;
 let magnetLengthDesc;
@@ -48,7 +50,8 @@ let lastTime = null;
 let parametersButton;
 let isParametersWindowOpen = true;
 let settings = [];
-
+let latestVoltage = [];
+let latestNVoltages = 300;
 // ========
 //  params
 // ========
@@ -64,74 +67,83 @@ function setup() {
     BValue.position(0, canvas.height - 100);
     magnet = new DraggableMagnet(magnetWidth, magnetHeight);
     bulb = new Bulb(130, 130, 80);
+    graph = new Graph(windowWidth - 630, height-180, 620, 160, latestNVoltages);
 
     slider = createSlider(-180, 180, 0, 10);
-    sliderValue = createSpan(slider.value())
+    slider.position(320, canvas.height + 10);
+    sliderValue = createSpan(slider.value());
+    sliderValue.position(380, canvas.height + 30);
+    sliderLabel = createSpan("Magnet angle");
+    sliderLabel.position(325, canvas.height + 50);
     slider.hide();
     sliderValue.hide();
+    sliderLabel.hide();
+
+    let settingsXStart = canvas.width * 0.10;
+    let settingsYStart = canvas.height * 0.10;
 
     parametersButton = createButton("Change Parameters");
+    parametersButton.position(10, canvas.height + 10)
     parametersButton.mousePressed(changeParametersWindowState);
 
     applyParametersButton = createButton('Save');
-    applyParametersButton.position(canvas.width * 0.5, canvas.height * 0.7);
+    applyParametersButton.position(settingsXStart + 30, settingsYStart + 420);
     applyParametersButton.mousePressed(saveParams);
     settings.push(applyParametersButton);
-
     BrDesc = createSpan("Magnet parameter from the <a href='https://www.supermagnete.de/eng/physical-magnet-data'>table</a> [T]");
-    BrDesc.position(canvas.width * 0.15, canvas.height * 0.2);
+    BrDesc.position(settingsXStart, settingsYStart);
     settings.push(BrDesc);
 
     BrText = createInput("1.42");
-    BrText.position(canvas.width * 0.15, canvas.height * 0.22);
+    BrText.position(settingsXStart, settingsYStart + 30);
     settings.push(BrText);
 
     magnetLengthDesc = createSpan("Magnet length [m]");
-    magnetLengthDesc.position(canvas.width * 0.15, canvas.height * 0.25);
+    magnetLengthDesc.position(settingsXStart, settingsYStart + 60);
     settings.push(magnetLengthDesc);
 
     magnetLengthText = createInput("0.25");
-    magnetLengthText.position(canvas.width * 0.15, canvas.height * 0.27);
+    magnetLengthText.position(settingsXStart, settingsYStart + 90);
     settings.push(magnetLengthText);
 
     magnetWidthDesc = createSpan("Magnet width [m]");
-    magnetWidthDesc.position(canvas.width * 0.15, canvas.height * 0.3);
+    magnetWidthDesc.position(settingsXStart, settingsYStart + 120);
     settings.push(magnetWidthDesc);
 
     magnetWidthText = createInput("0.1");
-    magnetWidthText.position(canvas.width * 0.15, canvas.height * 0.32);
+    magnetWidthText.position(settingsXStart, settingsYStart + 150);
     settings.push(magnetWidthText);
 
     magnetThicknessDesc = createSpan("Magnet thickness [m]");
-    magnetThicknessDesc.position(canvas.width * 0.15, canvas.height * 0.35);
+    magnetThicknessDesc.position(settingsXStart, settingsYStart + 180);
     settings.push(magnetThicknessDesc);
 
     magnetThicknessText = createInput("0.1");
-    magnetThicknessText.position(canvas.width * 0.15, canvas.height * 0.37);
+    magnetThicknessText.position(settingsXStart, settingsYStart + 210);
     settings.push(magnetThicknessText);
 
     coilDiameterDesc = createSpan("Coil diameter [m]");
-    coilDiameterDesc.position(canvas.width * 0.15, canvas.height * 0.4);
+    coilDiameterDesc.position(settingsXStart, settingsYStart + 240);
     settings.push(coilDiameterDesc);
 
     coilDiameterText = createInput("0.15");
-    coilDiameterText.position(canvas.width * 0.15, canvas.height * 0.42);
+    coilDiameterText.position(settingsXStart, settingsYStart + 270);
     settings.push(coilDiameterText);
 
     coilCountDesc = createSpan("Coils count");
-    coilCountDesc.position(canvas.width * 0.15, canvas.height * 0.45);
+    coilCountDesc.position(settingsXStart, settingsYStart + 300);
     settings.push(coilCountDesc);
 
     coilCountText = createInput("6");
-    coilCountText.position(canvas.width * 0.15, canvas.height * 0.47);
+    coilCountText.position(settingsXStart, settingsYStart + 330);
     settings.push(coilCountText);
 
     ppcmDesc = createSpan("Pixels per [cm] ratio");
-    ppcmDesc.position(canvas.width * 0.15, canvas.height * 0.50);
+    ppcmDesc.position(settingsXStart, settingsYStart + 360);
     settings.push(ppcmDesc);
 
     ppcmText = createInput("100");
-    ppcmText.position(canvas.width * 0.15, canvas.height * 0.52);
+    ppcmText.position(settingsXStart, settingsYStart + 390);
     settings.push(ppcmText);
 
     settings.forEach(s => {
@@ -155,17 +167,18 @@ function draw() {
         drawParametersInputSegment();
         slider.show();
         sliderValue.show();
+        sliderLabel.show();
         if (lastFi === null) lastFi = 0;
         if (lastTime === null) lastTime = Date.now();
         background(220);
-        image(coilBackImg, width / 2 - coilBackImg.width / 2, height / 2 - coilBackImg.height / 2, 250, 250);
+        image(coilBackImg, width / 2 - coilBackImg.width / 2, 300 - coilBackImg.height / 2, 250, 250);
         magnet.update();
         magnet.over();
         magnet.changeRotationInDegrees(slider.value())
         magnet.show();
-        image(coilFrontImg, width / 2 - coilFrontImg.width / 2 - coilPositionPixDiff, height / 2 - coilFrontImg.height / 2, 250, 250);
+        image(coilFrontImg, width / 2 - coilFrontImg.width / 2 - coilPositionPixDiff, 300 - coilFrontImg.height / 2, 250, 250);
         coilXMiddle = (width / 2) + (coilBackImg.width / 2) - 3 * coilPositionPixDiff;
-        coilYMiddle = (height / 2) - (coilBackImg.height / 4);
+        coilYMiddle = 300 - (coilBackImg.height / 4);
 
         let B = getB();
         let Fi = getFi(B, params["coilArea"], magnetAngleInPiRadians);
@@ -177,6 +190,9 @@ function draw() {
         lastTime = newTime;
 
         updateInfoBox(ElectromotoricForce, dFi, B, (getDistanceToMagnet() * 100));
+        latestVoltage.push(ElectromotoricForce);
+        latestVoltage = latestVoltage.slice(-latestNVoltages);
+        graph.show(latestVoltage);
         bulb.show(ElectromotoricForce);
     }
 }
@@ -227,7 +243,6 @@ function updateInfoBox(E, dFi, B, z) {
 
 function drawParametersInputSegment() {
     sliderValue.html(slider.value() + "°");
-    sliderValue.position(slider.width + 10, canvas.height + 5);
 }
 
 function saveParams() {
@@ -238,7 +253,6 @@ function saveParams() {
 
 function changeParametersWindowState() {
     isParametersWindowOpen = !isParametersWindowOpen;
-    console.log(isParametersWindowOpen);
 }
 
 function checkValues() {

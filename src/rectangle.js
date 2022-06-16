@@ -27,7 +27,7 @@ class Rectangle {
     }
 
     show() {
-        stroke(255);
+        push();
         if (this.dragging) {
             fill(50);
         } else if (this.rollover) {
@@ -36,6 +36,7 @@ class Rectangle {
             fill(175, 200);
         }
         rect(this.x, this.y, this.w, this.h);
+        pop();
     }
 
     pressed() {
