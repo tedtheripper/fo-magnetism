@@ -47,12 +47,20 @@ class DraggableMagnet {
             noFill();
             ellipse(0, -this.h, 300, 100);
             ellipse(0, this.h, 300, 100);
-
             ellipse(0, -2 * this.h, 500, 200);
             ellipse(0, 2 * this.h, 500, 200);
-
             ellipse(0, -3 * this.h, 900, 300);
             ellipse(0, 3 * this.h, 900, 300);
+
+            push();
+            fill(0);
+            triangle(10, -100, 0, -90, 0, -110);
+            triangle(10, 100, 0, 90, 0, 110);
+            triangle(10, -200, 0, -190, 0, -210);
+            triangle(10, 200, 0, 190, 0, 210);
+            triangle(10, -300, 0, -290, 0, -310);
+            triangle(10, 300, 0, 290, 0, 310);
+            pop();
 
             pop();
         }
