@@ -8,7 +8,7 @@ class DraggableMagnet {
         this.y = 300;
         this.w = width;
         this.h = height;
-        this.img = loadImage('../assets/magnet.png');
+        this.img = loadImage('assets/magnet.png');
 
         this.r = Math.sqrt(Math.pow(this.w / 2, 2) + Math.pow(this.h / 2, 2))
         this.rotationInRadians = 0;

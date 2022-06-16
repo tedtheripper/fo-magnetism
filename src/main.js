@@ -209,11 +209,11 @@ function windowResized() {
 }
 
 function preload() {
-    coilFrontImg = loadImage('../assets/coil_front.png');
-    coilBackImg = loadImage('../assets/coil_back.png');
-    bulbImg = loadImage('../assets/bulb.png');
-    shorterCable = loadImage('../assets/shorterCable.png');
-    longerCable = loadImage('../assets/longerCable.png');
+    coilFrontImg = loadImage('assets/coil_front.png');
+    coilBackImg = loadImage('assets/coil_back.png');
+    bulbImg = loadImage('assets/bulb.png');
+    shorterCable = loadImage('assets/shorterCable.png');
+    longerCable = loadImage('assets/longerCable.png');
 }
 
 function getB() {
