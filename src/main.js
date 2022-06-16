@@ -151,7 +151,7 @@ function setup() {
     bulbDesc.position(settingsXStart, settingsYStart + 420);
     settings.push(bulbDesc);
 
-    bulbText = createInput("230");
+    bulbText = createInput("2");
     bulbText.position(settingsXStart, settingsYStart + 450);
     settings.push(bulbText);
 
