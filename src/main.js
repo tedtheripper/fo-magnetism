@@ -73,7 +73,7 @@ function draw() {
     magnet.changeRotationInDegrees(slider.value())
     magnet.show();
     image(coilFrontImg, width / 2 - coilFrontImg.width / 2 - coilPositionPixDiff, height / 2 - coilFrontImg.height / 2, 250, 250);
-    coilXMiddle = (width / 2) - (coilFrontImg.width / 2) - (coilPositionPixDiff / 4);
+    coilXMiddle = (width / 2) + (coilBackImg.width / 2) - 3 * coilPositionPixDiff;
     coilYMiddle = (height / 2) - (coilBackImg.height / 4);
 
     let B = getB();
