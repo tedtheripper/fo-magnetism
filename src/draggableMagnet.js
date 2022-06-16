@@ -8,22 +8,22 @@ class DraggableMagnet {
         this.y = 300;
         this.w = width;
         this.h = height;
-        this.colors = [
-            [255, 0, 0],
-            [0, 70, 255]
-        ];
         this.img = loadImage('assets/magnet.png');
 
+        this.r = Math.sqrt(Math.pow(this.w / 2, 2) + Math.pow(this.h / 2, 2))
         this.rotationInRadians = 0;
     }
 
     over() {
-        if (mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h) {
-            this.rollover = true;
-        } else {
-            this.rollover = false;
-        }
+        const xMiddle = this.x + this.w / 2;
+        const yMiddle = this.y + this.h / 2;
 
+        const d = Math.sqrt(Math.pow((mouseX - xMiddle), 2) + Math.pow((mouseY - yMiddle), 2))
+
+        this.rollover = false;
+        if (d < this.r) {
+            this.rollover = true;
+        }
     }
 
     update() {
@@ -59,7 +59,7 @@ class DraggableMagnet {
     }
 
     pressed() {
-        if (mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h) {
+        if (this.rollover) {
             this.dragging = true;
             this.offsetX = this.x - mouseX;
             this.offsetY = this.y - mouseY;
