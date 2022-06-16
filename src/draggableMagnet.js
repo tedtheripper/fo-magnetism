@@ -13,6 +13,8 @@ class DraggableMagnet {
             [0, 70, 255]
         ];
         this.img = loadImage('assets/magnet.png');
+
+        this.rotationInRadians = 0;
     }
 
     over() {
@@ -47,7 +49,13 @@ class DraggableMagnet {
     }
 
     show() {
-        image(this.img, this.x, this.y, this.w, this.h);
+        push()
+        translate(this.x + this.w / 2, this.y + this.h / 2);
+        rotate(this.rotationInRadians)
+        image(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
+        // translate(-(this.x + this.w / 2), -(this.y + this.h / 2));
+        pop()
+            // rotate(-this.degreesToRadians(this.rotationInDegrees));
     }
 
     pressed() {
@@ -56,8 +64,18 @@ class DraggableMagnet {
             this.offsetX = this.x - mouseX;
             this.offsetY = this.y - mouseY;
         }
-        rotate(90)
+    }
 
+    changeRotation(angle) {
+        this.rotationInRadians = angle;
+    }
+
+    changeRotationInDegrees(angleInDegrees) {
+        this.rotationInRadians = this.degreesToRadians(angleInDegrees);
+    }
+
+    degreesToRadians(degrees) {
+        return degrees * (PI / 180);
     }
 
     released() {

@@ -36,7 +36,7 @@ function setup() {
     canvas = createCanvas(windowWidth, windowHeight * 3 / 4);
     magnet = new DraggableMagnet(magnetWidth, magnetHeight);
     bulb = new Bulb(130, 130, 80);
-    slider = createSlider(-90, 90, 0, 10);
+    slider = createSlider(-180, 180, 0, 10);
     sliderValue = createSpan(slider.value())
     BValue = createSpan("Value: 0");
     BValue.position(0, canvas.height + 40)
@@ -47,10 +47,11 @@ function draw() {
     if (lastTime === null) lastTime = Date.now();
     background(220);
     image(coilBackImg, width / 2 - coilBackImg.width / 2, height / 2 - coilBackImg.height / 2, 250, 250);
+    sliderValue.html(slider.value());
     magnet.update();
     magnet.over();
+    magnet.changeRotationInDegrees(slider.value())
     magnet.show();
-    sliderValue.html(slider.value());
     image(coilFrontImg, width / 2 - coilFrontImg.width / 2 - coilPositionPixDiff, height / 2 - coilFrontImg.height / 2, 250, 250);
     coilXMiddle = (width / 2) - (coilFrontImg.width / 2) - (coilPositionPixDiff / 4);
     coilYMiddle = (height / 2) - (coilBackImg.height / 4);
