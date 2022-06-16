@@ -12,6 +12,7 @@ class DraggableMagnet {
             [255, 0, 0],
             [0, 70, 255]
         ];
+        this.img = loadImage('assets/magnet.png');
     }
 
     over() {
@@ -46,15 +47,7 @@ class DraggableMagnet {
     }
 
     show() {
-        stroke(0);
-
-        fill(this.colors[0]);
-        rect(this.x, this.y, this.w / 2, this.h);
-        fill(this.colors[1]);
-        rect(this.x + this.w / 2, this.y, this.w / 2, this.h);
-        fill([0, 0, 0]);
-        text("N", this.x + this.w * 1 / 4, this.y + this.h / 2);
-        text("S", this.x + this.w * 3 / 4, this.y + this.h / 2);
+        image(this.img, this.x, this.y, this.w, this.h);
     }
 
     pressed() {
@@ -83,7 +76,7 @@ class DraggableMagnet {
         return this.x;
     }
 
-    getMaxX(){
+    getMaxX() {
         return this.x + this.w;
     }
 

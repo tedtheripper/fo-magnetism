@@ -58,15 +58,17 @@ function draw() {
     let B = getB();
     let Fi = getFi(B, coilArea, magnetAngleInPiRadians);
     let newTime = Date.now();
-    let dFi = Fi-lastFi; 
-    let dTime = (newTime - lastTime)/1000;
+    let dFi = Fi - lastFi;
+    let dTime = (newTime - lastTime) / 1000;
     let ElectromotoricForce = getElectroMotoricForce(coilQuantity, dFi, dTime);
     lastFi = Fi;
     lastTime = newTime;
 
-    updateInfoBox(ElectromotoricForce, dFi, B, (getDistanceToMagnet()*100).toFixed(2));
+    updateInfoBox(ElectromotoricForce, dFi, B, (getDistanceToMagnet() * 100).toFixed(2));
     bulb.show(ElectromotoricForce);
-    
+    fill(0)
+    rect(100, 100, -30, -30);
+
 }
 
 function mousePressed() {
@@ -95,20 +97,17 @@ function getB() {
 }
 
 function getDistanceToMagnet() {
-    return Math.sqrt(Math.pow((min(magnet.getMinX(), magnet.getMaxX()) - coilXMiddle)/pixelsPerM, 2) + Math.pow((magnet.getYMiddle() - coilYMiddle)/pixelsPerM, 2))
+    return Math.sqrt(Math.pow((min(magnet.getMinX(), magnet.getMaxX()) - coilXMiddle) / pixelsPerM, 2) + Math.pow((magnet.getYMiddle() - coilYMiddle) / pixelsPerM, 2))
 }
 
-function getFi(B, S, angle)
-{
+function getFi(B, S, angle) {
     return B * S * Math.cos(angle);
 }
 
-function getElectroMotoricForce(N, dFi, dTime)
-{
-    return -(N*dFi)/dTime;
+function getElectroMotoricForce(N, dFi, dTime) {
+    return -(N * dFi) / dTime;
 }
 
-function updateInfoBox(E, dFi, B, z)
-{
+function updateInfoBox(E, dFi, B, z) {
     BValue.html("<div style=\"margin: 10px; padding: 10px; background-color: #f9e3;\">" + "Electromotoric Force: " + E + "<br/>Delta Fi: " + dFi + "<br/>B: " + B + "<br/>Z: " + z + "cm" + "</div>");
 }
