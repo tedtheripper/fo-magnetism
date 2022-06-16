@@ -1,13 +1,30 @@
-let magnet;
-let bulb;
-let slider;
-let sliderValue;
-let canvas;
-let coilFrontImg;
-let coilBackImg;
 let coilPositionPixDiff = 63;
 let magnetWidth = 150;
 let magnetHeight = 50;
+
+// =======
+// objects
+// =======
+let magnet;
+let bulb;
+let canvas;
+let coilFrontImg;
+let coilBackImg;
+
+
+// ======
+// parameters objects input
+// ======
+let slider;
+let sliderValue;
+let BrText;
+let magnetWidthText;
+let magnetHeightText;
+let coilDiameterText;
+let coilCountText;
+let ppcmText;
+
+let applyParametersButton;
 
 let coilXMiddle;
 let coilYMiddle;
@@ -39,15 +56,18 @@ function setup() {
     slider = createSlider(-180, 180, 0, 10);
     sliderValue = createSpan(slider.value())
     BValue = createSpan("Value: 0");
-    BValue.position(0, canvas.height + 40)
+    BValue.position(0, canvas.height + 40);
+
+    applyParametersButton = createButton('Save');
+
 }
 
 function draw() {
     if (lastFi === null) lastFi = 0;
     if (lastTime === null) lastTime = Date.now();
     background(220);
+    drawParametersInputSegment();
     image(coilBackImg, width / 2 - coilBackImg.width / 2, height / 2 - coilBackImg.height / 2, 250, 250);
-    sliderValue.html(slider.value());
     magnet.update();
     magnet.over();
     magnet.changeRotationInDegrees(slider.value())
@@ -98,8 +118,8 @@ function getB() {
 function getDistanceToMagnet() {
     let northPoleCords = magnet.getPoleCords(true);
     let southPoleCords = magnet.getPoleCords(false);
-    return min(Math.sqrt(Math.pow(northPoleCords[0] - coilXMiddle, 2) + Math.pow(northPoleCords[1] - coilYMiddle, 2)), 
-    Math.sqrt(Math.pow(southPoleCords[0] - coilXMiddle, 2) + Math.pow(southPoleCords[1] - coilYMiddle, 2))) / pixelsPerM;
+    return min(Math.sqrt(Math.pow(northPoleCords[0] - coilXMiddle, 2) + Math.pow(northPoleCords[1] - coilYMiddle, 2)),
+        Math.sqrt(Math.pow(southPoleCords[0] - coilXMiddle, 2) + Math.pow(southPoleCords[1] - coilYMiddle, 2))) / pixelsPerM;
 }
 
 function getFi(B, S, angle) {
@@ -112,4 +132,9 @@ function getElectroMotoricForce(N, dFi, dTime) {
 
 function updateInfoBox(E, dFi, B, z) {
     BValue.html("<div style=\"margin: 10px; padding: 10px; background-color: #f9e3;\">" + "Electromotoric Force: " + E + "<br/>Delta Fi: " + dFi + "<br/>B: " + B + "<br/>Z: " + z + "cm" + "</div>");
+}
+
+function drawParametersInputSegment() {
+    sliderValue.html(slider.value());
+
 }
