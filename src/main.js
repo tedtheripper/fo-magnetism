@@ -19,10 +19,10 @@ let slider;
 let sliderValue;
 let BrDesc;
 let BrText;
+let magnetLengthDesc;
+let magnetLengthText;
 let magnetWidthDesc;
 let magnetWidthText;
-let magnetHeightDesc;
-let magnetHeightText;
 let magnetThicknessDesc;
 let magnetThicknessText;
 let coilDiameterDesc;
@@ -34,7 +34,9 @@ let ppcmText;
 
 let applyParametersButton;
 
-let params = {};
+let params = {
+    "ppcm": 100
+};
 
 let coilXMiddle;
 let coilYMiddle;
@@ -51,15 +53,9 @@ let settings = [];
 //  params
 // ========
 let pixelsPerCM = 100;
-let magnetLengthInM = 0.10;
-let magnetWidthInM = 0.10;
-let magnetThicknessInM = 0.25;
-let coilArea = 10;
-let coilQuantity = 6;
-let Br = 1.42; // data from the table
 let magnetAngleInPiRadians = 0;
 
-let pixelsPerM = pixelsPerCM * 100;
+let pixelsPerM = params["ppcm"] * 100;
 
 
 function setup() {
@@ -70,9 +66,9 @@ function setup() {
     bulb = new Bulb(130, 130, 80);
 
     slider = createSlider(-180, 180, 0, 10);
-    slider.position(10, canvas.height + 50);
     sliderValue = createSpan(slider.value())
-    sliderValue.position(10, canvas.height + 50);
+    slider.hide();
+    sliderValue.hide();
 
     parametersButton = createButton("Change Parameters");
     parametersButton.mousePressed(changeParametersWindowState);
@@ -90,21 +86,21 @@ function setup() {
     BrText.position(canvas.width * 0.15, canvas.height * 0.22);
     settings.push(BrText);
 
+    magnetLengthDesc = createSpan("Magnet length [m]");
+    magnetLengthDesc.position(canvas.width * 0.15, canvas.height * 0.25);
+    settings.push(magnetLengthDesc);
+
+    magnetLengthText = createInput("0.25");
+    magnetLengthText.position(canvas.width * 0.15, canvas.height * 0.27);
+    settings.push(magnetLengthText);
+
     magnetWidthDesc = createSpan("Magnet width [m]");
-    magnetWidthDesc.position(canvas.width * 0.15, canvas.height * 0.25);
+    magnetWidthDesc.position(canvas.width * 0.15, canvas.height * 0.3);
     settings.push(magnetWidthDesc);
 
     magnetWidthText = createInput("0.1");
-    magnetWidthText.position(canvas.width * 0.15, canvas.height * 0.27);
+    magnetWidthText.position(canvas.width * 0.15, canvas.height * 0.32);
     settings.push(magnetWidthText);
-
-    magnetHeightDesc = createSpan("Magnet height [m]");
-    magnetHeightDesc.position(canvas.width * 0.15, canvas.height * 0.3);
-    settings.push(magnetHeightDesc);
-
-    magnetHeightText = createInput("0.1");
-    magnetHeightText.position(canvas.width * 0.15, canvas.height * 0.32);
-    settings.push(magnetHeightText);
 
     magnetThicknessDesc = createSpan("Magnet thickness [m]");
     magnetThicknessDesc.position(canvas.width * 0.15, canvas.height * 0.35);
@@ -126,7 +122,7 @@ function setup() {
     coilCountDesc.position(canvas.width * 0.15, canvas.height * 0.45);
     settings.push(coilCountDesc);
 
-    coilCountText = createInput("1");
+    coilCountText = createInput("6");
     coilCountText.position(canvas.width * 0.15, canvas.height * 0.47);
     settings.push(coilCountText);
 
@@ -156,10 +152,12 @@ function draw() {
         settings.forEach(s => s.show());
     } else {
         settings.forEach(s => s.hide());
+        drawParametersInputSegment();
+        slider.show();
+        sliderValue.show();
         if (lastFi === null) lastFi = 0;
         if (lastTime === null) lastTime = Date.now();
         background(220);
-        drawParametersInputSegment();
         image(coilBackImg, width / 2 - coilBackImg.width / 2, height / 2 - coilBackImg.height / 2, 250, 250);
         magnet.update();
         magnet.over();
@@ -170,11 +168,11 @@ function draw() {
         coilYMiddle = (height / 2) - (coilBackImg.height / 4);
 
         let B = getB();
-        let Fi = getFi(B, coilArea, magnetAngleInPiRadians);
+        let Fi = getFi(B, params["coilArea"], magnetAngleInPiRadians);
         let newTime = Date.now();
         let dFi = Fi - lastFi;
         let dTime = (newTime - lastTime) / 1000;
-        let ElectromotoricForce = getElectroMotoricForce(coilQuantity, dFi, dTime);
+        let ElectromotoricForce = getElectroMotoricForce(params["coilCount"], dFi, dTime);
         lastFi = Fi;
         lastTime = newTime;
 
@@ -201,10 +199,10 @@ function preload() {
 }
 
 function getB() {
-    const firstPart = Br / PI;
+    const firstPart = params["br"] / PI;
     const z = getDistanceToMagnet();
-    const firstArctan = Math.atan((magnetLengthInM * magnetWidthInM) / (2 * z * Math.sqrt(4 * Math.pow(z, 2) + Math.pow(magnetLengthInM, 2) + Math.pow(magnetWidthInM, 2))));
-    const secondArctan = Math.atan((magnetLengthInM * magnetWidthInM) / (2 * (magnetThicknessInM + z) * Math.sqrt(4 * Math.pow((magnetThicknessInM + z), 2) + Math.pow(magnetLengthInM, 2) + Math.pow(magnetWidthInM, 2))));
+    const firstArctan = Math.atan((params["length"] * params["width"]) / (2 * z * Math.sqrt(4 * Math.pow(z, 2) + Math.pow(params["length"], 2) + Math.pow(params["width"], 2))));
+    const secondArctan = Math.atan((params["length"] * params["width"]) / (2 * (params["thickness"] + z) * Math.sqrt(4 * Math.pow((params["thickness"] + z), 2) + Math.pow(params["length"], 2) + Math.pow(params["width"], 2))));
     return firstPart * (firstArctan - secondArctan);
 }
 
@@ -224,12 +222,12 @@ function getElectroMotoricForce(N, dFi, dTime) {
 }
 
 function updateInfoBox(E, dFi, B, z) {
-    BValue.html("<div style=\"margin: 10px; padding: 10px; background-color: #f9e3;\">" + "Electromotoric Force: " + E.toFixed(4) + "<br/>Delta Fi: " + dFi.toFixed(4) + "<br/>B: " + B.toFixed(4) + "<br/>Z: " + z.toFixed(2) + "cm" + "</div>");
+    BValue.html("<div style=\"margin: 10px; padding: 10px; background-color: #f9e3;\">" + "Electromotoric Force [V]: " + E.toFixed(4) + "<br/>ΔΦ [Wb]: " + dFi.toFixed(4) + "<br/>B [T]: " + B.toFixed(4) + "<br/>Z [cm]: " + z.toFixed(2) + "cm" + "</div>");
 }
 
 function drawParametersInputSegment() {
-    sliderValue.html(slider.value());
-
+    sliderValue.html(slider.value() + "°");
+    sliderValue.position(slider.width + 10, canvas.height + 5);
 }
 
 function saveParams() {
@@ -252,20 +250,20 @@ function checkValues() {
         params["br"] = br;
     }
 
+    let length = parseFloat(magnetLengthText.value());
+    if (isNaN(length) || length <= 0) {
+        alert("[Magnet length] must be a positive number!");
+        return false;
+    } else {
+        params["length"] = length;
+    }
+
     let width = parseFloat(magnetWidthText.value());
     if (isNaN(width) || width <= 0) {
         alert("[Magnet width] must be a positive number!");
         return false;
     } else {
         params["width"] = width;
-    }
-
-    let height = parseFloat(magnetHeightText.value());
-    if (isNaN(height) || height <= 0) {
-        alert("[Magnet height] must be a positive number!");
-        return false;
-    } else {
-        params["height"] = height;
     }
 
     let thickness = parseFloat(magnetThicknessText.value());
