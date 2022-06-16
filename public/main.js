@@ -68,7 +68,7 @@ let pixelsPerM = params["ppcm"] * 100;
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight * 0.99);
     let settingsXStart = canvas.width * 0.70;
-    let settingsYStart = canvas.height * 0.10;
+    let settingsYStart = canvas.height * 0.05;
     BValue = createSpan("");
     BValue.position(settingsXStart, height - 140);
     magnet = new DraggableMagnet(magnetWidth, magnetHeight);
