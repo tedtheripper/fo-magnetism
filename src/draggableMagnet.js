@@ -4,7 +4,7 @@ class DraggableMagnet {
         this.dragging = false;
         this.rollover = false;
 
-        this.x = 300;
+        this.x = 800;
         this.y = 300;
         this.w = width;
         this.h = height;
@@ -85,9 +85,9 @@ class DraggableMagnet {
     }
 
     getPoleCords(isNorthPole) {
-        let sign = isNorthPole? -1:  1;
-        let x = (sign * this.w/2)*Math.cos(this.rotationInRadians);
-        let y = (sign * this.w/2)*Math.sin(this.rotationInRadians);
+        let sign = isNorthPole ? -1 : 1;
+        let x = (sign * this.w / 2) * Math.cos(this.rotationInRadians);
+        let y = (sign * this.w / 2) * Math.sin(this.rotationInRadians);
         return [this.getXmiddle() + x, this.getYmiddle() + y];
     }
 }

@@ -8,7 +8,7 @@ class Bulb {
 
     show(intensity) {
         push();
-        stroke(0);
+        noStroke();
         fill(255, 255, (max(this.maxVoltage - Math.abs(intensity), 0) * 255) / this.maxVoltage);
         circle(this.x, this.y, this.r);
         pop();

@@ -10,6 +10,9 @@ let bulb;
 let canvas;
 let coilFrontImg;
 let coilBackImg;
+let bulbImg;
+let shorterCable;
+let longerCable;
 let graph;
 
 // ======
@@ -35,6 +38,7 @@ let ppcmDesc; // pixels per cm
 let ppcmText;
 let bulbDesc;
 let bulbText;
+let savedText;
 
 let applyParametersButton;
 
@@ -70,10 +74,8 @@ function setup() {
     BValue = createSpan("");
     BValue.position(settingsXStart, height - 140);
     magnet = new DraggableMagnet(magnetWidth, magnetHeight);
-    bulb = new Bulb(130, 130, 80);
+    bulb = new Bulb(130, 130, 180);
     graph = new Graph(10, height - 165, 620, 160, latestNVoltages);
-
-
 
     slider = createSlider(-180, 180, 0, 10);
     slider.position(700, height - 140);
@@ -134,7 +136,7 @@ function setup() {
     coilCountText.position(settingsXStart, settingsYStart + 330);
     settings.push(coilCountText);
 
-    ppcmDesc = createSpan("Pixels per [cm] ratio");
+    ppcmDesc = createSpan("Pixels per cm ratio");
     ppcmDesc.position(settingsXStart, settingsYStart + 360);
     settings.push(ppcmDesc);
 
@@ -150,6 +152,10 @@ function setup() {
     bulbText.position(settingsXStart, settingsYStart + 450);
     settings.push(bulbText);
 
+    savedText = createSpan("Saved!");
+    savedText.position(settingsXStart + 150, settingsYStart + 500);
+    savedText.hide();
+
     checkValues();
 }
 
@@ -160,6 +166,7 @@ function draw() {
     drawParametersInputSegment();
     if (lastFi === null) lastFi = 0;
     if (lastTime === null) lastTime = Date.now();
+
     image(coilBackImg, 600 - coilBackImg.width / 2, 300 - coilBackImg.height / 2, 250, 250);
     magnet.update();
     magnet.over();
@@ -181,6 +188,9 @@ function draw() {
     latestVoltage = latestVoltage.slice(-latestNVoltages);
     graph.show(latestVoltage);
     bulb.show(ElectromotoricForce);
+    image(shorterCable, 150, 100, 325, 250);
+    image(longerCable, 110, 140, 535, 240);
+    image(bulbImg, 50, 70, 160, 160);
     magnet.show();
     image(coilFrontImg, 600 - coilFrontImg.width / 2 - coilPositionPixDiff, 300 - coilFrontImg.height / 2, 250, 250);
 }
@@ -200,6 +210,9 @@ function windowResized() {
 function preload() {
     coilFrontImg = loadImage('assets/coil_front.png');
     coilBackImg = loadImage('assets/coil_back.png');
+    bulbImg = loadImage('assets/bulb.png');
+    shorterCable = loadImage('assets/shorterCable.png');
+    longerCable = loadImage('assets/longerCable.png');
 }
 
 function getB() {
@@ -235,6 +248,12 @@ function drawParametersInputSegment() {
 
 function saveParams() {
     checkValues();
+    savedText.show();
+    setTimeout(hideSavedText, 2000);
+}
+
+function hideSavedText() {
+    savedText.hide();
 }
 
 function checkValues() {
