@@ -15,5 +15,5 @@ app.get('/', function(req, res) {
 
 app.listen(8080, function(error) {
     if (error) throw error
-    console.log("Server created Successfully")
+    console.log("Server created Successfully at http://localhost:8080")
 })
