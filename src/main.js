@@ -54,15 +54,12 @@ let BValue;
 let lastFi = null;
 let lastTime = null;
 
-let parametersButton;
-let isParametersWindowOpen = true;
 let settings = [];
 let latestVoltage = [];
 let latestNVoltages = 300;
 // ========
 //  params
 // ========
-let pixelsPerCM = 100;
 let magnetAngleInPiRadians = 0;
 
 let pixelsPerM = params["ppcm"] * 100;
